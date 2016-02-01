@@ -1,0 +1,23 @@
+﻿<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>NLog.Targets.TextWriter</id>
+    <version>$version$</version>
+    <title>NLog Target for TextWriter</title>
+    <authors>dhgmssolutions dpvreony</authors>
+    <owners>dhgmssolutions dpvreony</owners>
+    <licenseUrl>https://raw.githubusercontent.com/DHGMS-Solutions/nlogtargetstextwriter/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/DHGMS-Solutions/nlogtargetstextwriter</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>NLog Target for using a Text Writer</description>
+    <copyright>Copyright belongs to respective package owners</copyright>
+    <tags>NLog TextWriter</tags>
+    <dependencies>
+      <dependency id="nlog" version="4.2.3" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\release\nlog.targets.textwriter.dll" target="lib\net45" />
+    <file src="license" />
+  </files>
+</package>
