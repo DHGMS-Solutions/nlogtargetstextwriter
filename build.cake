@@ -38,32 +38,37 @@ if (string.IsNullOrWhiteSpace(target))
 var treatWarningsAsErrors = false;
 
 // Build configuration
+var githubOwner = "dhgms-solutions";
+var githubRepository = "nlogtargetstextwriter";
+var githubUrl = string.Format("https://github.com/{0}/{1}", githubOwner, githubRepository);
+var solutionToBuild = "./src/NLog.Targets.TextWriter.sln";
+
 var local = BuildSystem.IsLocalBuild;
 var isPullRequest = AppVeyor.Environment.PullRequest.IsPullRequest;
-var isRepository = StringComparer.OrdinalIgnoreCase.Equals("dhgms-solutions/nlogtargetstextwriter", AppVeyor.Environment.Repository.Name);
+var isRepository = StringComparer.OrdinalIgnoreCase.Equals(githubOwner + "/" + githubRepository, AppVeyor.Environment.Repository.Name);
 
 var isDevelopBranch = StringComparer.OrdinalIgnoreCase.Equals("develop", AppVeyor.Environment.Repository.Branch);
 var isReleaseBranch = StringComparer.OrdinalIgnoreCase.Equals("master", AppVeyor.Environment.Repository.Branch);
 var isTagged = AppVeyor.Environment.Repository.Tag.IsTag;
+var unitTestProjectFilePath = "./src/NLog.Targets.TextWriter.UnitTests/NLog.Targets.TextWriter.UnitTests.csproj";
 
-var githubOwner = "dhgms-solutions";
-var githubRepository = "nlogtargetstextwriter";
-var githubUrl = string.Format("https://github.com/{0}/{1}", githubOwner, githubRepository);
 
 var vsPath = VSWhereLatest();
 
 if (vsPath == null)
 {
-	throw new Exception("Unable to find Visual Studio");
+    throw new Exception("Unable to find Visual Studio");
 }
 Information("Visual Studio Path: " + vsPath);
 
 var msBuildPath = GetFiles(vsPath + "/**/msbuild.exe").FirstOrDefault();
 if (msBuildPath == null)
 {
-	throw new Exception("Unable to find MSBuild path");
+    throw new Exception("Unable to find MSBuild path");
 }
 Information("MSBuild Path: " + msBuildPath);
+
+var androidHome = EnvironmentVariable("ANDROID_HOME");
 
 // Version
 var gitVersion = GitVersion();
@@ -82,23 +87,26 @@ Information("fileVersion: " + fileVersion);
 // Artifacts
 var artifactDirectory = "./artifacts/";
 var testCoverageOutputFile = artifactDirectory + "OpenCover.xml";
-var packageWhitelist = new[] { "Dhgms.AspNetCoreContrib.Abstractions",
-                               "Dhgms.AspNetCoreContrib.Controllers" };
+var packageWhitelist = new[] { "NLog.Targets.TextWriter" };
 
 var runSonarQube = false;
 var sonarQubePreview = false;
 var sonarQubeLogin = EnvironmentVariable("sonarqubeLogin");
-var sonarqubeProjectKey = "NLogTargetsTextWriter";
+var sonarqubeProjectKey = "nlogtargetstextwriter";
 var sonarqubeOrganisationKey = "dpvreony-github";
 
 // sonarqube
-if (isRepository && !local && sonarQubeLogin != null) {
-    if (isPullRequest) { 
+if (isRepository && !local && sonarQubeLogin != null)
+{
+    if (isPullRequest)
+    {
+        // currently doesn't happen as PR's don't pass secure env vars
         sonarQubePreview = true;
         runSonarQube = true;
         Information("Sonar on PR " + AppVeyor.Environment.PullRequest.Number);
     }
-    else if (isReleaseBranch) {
+    else
+    {
         runSonarQube = true;
         Information("Sonar on branch " + AppVeyor.Environment.Repository.Branch);
     }
@@ -113,7 +121,7 @@ Action Abort = () => { throw new Exception("a non-recoverable fatal error occurr
 ///////////////////////////////////////////////////////////////////////////////
 Setup(context =>
 {
-    Information("Building version {0} of AspNetContrib. (isTagged: {1})", informationalVersion, isTagged);
+    Information("Building version {0}. (isTagged: {1})", informationalVersion, isTagged);
 
     CreateDirectory(artifactDirectory);
 });
@@ -137,6 +145,7 @@ Task("BuildSolution")
                 ArgumentCustomization = args => args.Append("/bl:build.binlog /m")
             }
             .WithTarget("build;pack") 
+            .WithProperty("AndroidSdkDirectory", androidHome)
             .WithProperty("PackageOutputPath",  MakeAbsolute(Directory(artifactDirectory)).ToString().Quote())
             .WithProperty("TreatWarningsAsErrors", treatWarningsAsErrors.ToString())
             .SetConfiguration("Release")
@@ -149,7 +158,7 @@ Task("BuildSolution")
     };
 
     // Restore must be a separate step
-    MSBuild("./src/Dhgms.AspNetCoreContrib.sln", new MSBuildSettings() {
+    MSBuild(solutionToBuild, new MSBuildSettings() {
             ToolPath = msBuildPath,
             ArgumentCustomization = args => args.Append("/bl:restore.binlog /m")
         }
@@ -158,7 +167,7 @@ Task("BuildSolution")
         .WithProperty("Version", nugetVersion.ToString())
         .SetVerbosity(Verbosity.Minimal));
     
-    build("./src/Dhgms.AspNetCoreContrib.sln");
+    build(solutionToBuild);
 });
 
 // https://andrewlock.net/running-tests-with-dotnet-xunit-using-cake/
@@ -169,33 +178,31 @@ Task("RunUnitTests")
     .IsDependentOn("BuildSolution")
     .Does(() =>
 {
-	var filePath = "./src/NLog.Targets.TextWriter.UnitTests/NLog.Targets.TextWriter.csproj";
-	var projectDirectory = new FilePath(filePath).GetDirectory();
-	var pdbDirectory = projectDirectory + "\\bin\\Debug\\netcoreapp2.0";
+    var projectDirectory = new FilePath(unitTestProjectFilePath).GetDirectory();
+    var pdbDirectory = projectDirectory + "\\bin\\Debug\\netcoreapp2.0";
 
-	// workaround for https://github.com/xunit/xunit/issues/1573
-	// C:\Program Files\dotnet\shared\Microsoft.NETCore.App
-	var fxVersion = "2.0.5";
+    // workaround for https://github.com/xunit/xunit/issues/1573
+    // C:\Program Files\dotnet\shared\Microsoft.NETCore.App
+    var fxVersion = "2.0.5";
 
     Action<ICakeContext> testAction = tool => {
-        //tool.DotNetCoreTest(filePath, dotNetCoreTestSettings);
-		tool.DotNetCoreTool(
-                projectPath: filePath,
-                command: "xunit", 
-                arguments: "-noshadow -fxversion " + fxVersion + " -configuration Debug -diagnostics"
+        tool.DotNetCoreTool(
+                projectPath: unitTestProjectFilePath,
+                command: "test"//, 
+                //arguments: "-noshadow -fxversion " + fxVersion + " -configuration Debug -diagnostics"
             );
     };
 
     OpenCover(testAction,
         testCoverageOutputFile,
         new OpenCoverSettings {
-			//LogLevel = OpenCoverLogLevel.All,
-			MergeOutput = true,
-			Register = "user",
+            //LogLevel = OpenCoverLogLevel.All,
+            MergeOutput = true,
+            Register = "user",
             ReturnTargetCodeOffset = 0,
             ArgumentCustomization = args => args.Append("-coverbytest:*.UnitTests.dll").Append("-searchdirs:" + pdbDirectory).Append("-oldstyle"),
-			// working dir set to allow use of dotnet-xunit
-			WorkingDirectory = projectDirectory
+            // working dir set to allow use of dotnet-xunit
+            WorkingDirectory = projectDirectory
         }
         .WithFilter("+[Dhgms*]*")
         .ExcludeByAttribute("*.ExcludeFromCodeCoverage*")
@@ -213,10 +220,12 @@ Task("RunUnitTests")
 Task("UploadTestCoverage")
     .WithCriteria(() => !local)
     .WithCriteria(() => isRepository)
+    .WithCriteria(() => !isPullRequest)
     .IsDependentOn("RunUnitTests")
     .Does(() =>
 {
     // Resolve the API key.
+    // pull requests can't currently get secure variables
     var token = EnvironmentVariable("COVERALLS_TOKEN");
     if (string.IsNullOrEmpty(token))
     {
@@ -245,13 +254,19 @@ Task("SonarBegin")
 
         if (sonarQubePreview) {
             Information("Sonar: Running Sonar on PR " + AppVeyor.Environment.PullRequest.Number);
-		    arguments += " /d:\"sonar.projectVersion=sonar.projectVersion\" /d:\"sonar.analysis.mode=preview\"";
+            arguments += " /d:\"sonar.projectVersion=sonar.projectVersion\" /d:\"sonar.analysis.mode=preview\"";
         }
         else {
             Information("Sonar: Running Sonar on branch " + AppVeyor.Environment.Repository.Branch);
+            if (!isReleaseBranch)
+            {
+                arguments += " /d:\"sonar.branch.name=" + AppVeyor.Environment.Repository.Branch + "\"";
+            }
         }
+
+
         var sonarStartSettings = new ProcessSettings{ Arguments = arguments };
-		StartProcess("./tools/MSBuild.SonarQube.Runner.Tool/tools/MSBuild.SonarQube.Runner.exe", sonarStartSettings);
+        StartProcess("./tools/MSBuild.SonarQube.Runner.Tool/tools/MSBuild.SonarQube.Runner.exe", sonarStartSettings);
   /*
      SonarBegin(new SonarBeginSettings{
         Url = "sonarcube.contoso.local",
@@ -259,19 +274,13 @@ Task("SonarBegin")
         Password = "admin",
         Verbose = true
      });
-	 */
+     */
   });
 
 Task("SonarEnd")
   .IsDependentOn("UploadTestCoverage")
   .WithCriteria(() => runSonarQube)
   .Does(() => {
-  /*
-     SonarEnd(new SonarEndSettings{
-        Login = "admin",
-        Password = "admin"
-     });
-	*/
     var sonarEndSettings = new ProcessSettings{ Arguments = "end /d:\"sonar.login=" + sonarQubeLogin + "\"" };
     StartProcess("./tools/MSBuild.SonarQube.Runner.Tool/tools/MSBuild.SonarQube.Runner.exe", sonarEndSettings);
   });
