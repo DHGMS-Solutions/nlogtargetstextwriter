@@ -11,6 +11,8 @@
     <RepositoryUrl>https://github.com/DHGMS-Solutions/nlogtargetstextwriter</RepositoryUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/DHGMS-Solutions/nlogtargetstextwriter/master/LICENSE</PackageLicenseUrl>
     <PackageTags>NLog TextWriter</PackageTags>
+    <DebugType>full</DebugType>
+    <DebugSymbols>True</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>
