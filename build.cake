@@ -2,22 +2,23 @@
 // ADDINS
 //////////////////////////////////////////////////////////////////////
 
-//#addin "nuget:?package=Cake.FileHelpers&version=1.0.4"
-#addin "nuget:?package=Cake.Coveralls&version=0.4.0"
-//#addin "nuget:?package=Cake.PinNuGetDependency&version=1.0.0"
-//#addin "nuget:?package=Cake.Powershell&version=0.3.5"
+//#addin "nuget:?package=Cake.FileHelpers&version=3.0.0"
+#addin "nuget:?package=Cake.Coveralls&version=0.9.0"
+//#addin "nuget:?package=Cake.PinNuGetDependency&version=3.0.1"
+//#addin "nuget:?package=Cake.Powershell&version=0.4.5"
 //#addin "nuget:?package=Cake.Sonar&version=1.0.4"
 
 //////////////////////////////////////////////////////////////////////
 // TOOLS
 //////////////////////////////////////////////////////////////////////
 
-#tool "nuget:?package=GitReleaseManager&version=0.6.0"
-#tool "nuget:?package=GitVersion.CommandLine&version=3.6.5"
-#tool "nuget:?package=coveralls.io&version=1.3.4"
+#tool "nuget:?package=GitReleaseManager&version=0.7.1"
+#tool "nuget:?package=coveralls.io&version=1.4.2"
 #tool "nuget:?package=OpenCover&version=4.6.519"
-#tool "nuget:?package=ReportGenerator&version=2.5.11"
-#tool "nuget:?package=vswhere&version=2.1.4"
+#tool "nuget:?package=ReportGenerator&version=3.1.2"
+#tool "nuget:?package=vswhere&version=2.5.2"
+#tool "nuget:?package=xunit.runner.console&version=2.4.0"
+#tool "nuget:?package=GitVersion.CommandLine&version=3.6.5"
 #tool "nuget:?package=MSBuild.SonarQube.Runner.Tool"
 
 //////////////////////////////////////////////////////////////////////
@@ -74,11 +75,12 @@ var androidHome = EnvironmentVariable("ANDROID_HOME");
 var gitVersion = GitVersion();
 var majorMinorPatch = gitVersion.MajorMinorPatch;
 var informationalVersion = gitVersion.InformationalVersion;
-var nugetVersion = gitVersion.NuGetVersion;
+var nugetVersion = gitVersion.NuGetVersionV2;
 var buildVersion = gitVersion.FullBuildMetaData;
 var assemblyVersion = gitVersion.Major + "." + gitVersion.Minor + ".0.0";
 var fileVersion = majorMinorPatch;
 var packageVersion = isReleaseBranch ? majorMinorPatch : informationalVersion;
+Information("nugetVersion: " + nugetVersion);
 Information("informationalVersion: " + informationalVersion);
 Information("assemblyVersion: " + assemblyVersion);
 Information("fileVersion: " + fileVersion);
@@ -144,8 +146,7 @@ Task("BuildSolution")
                 ToolPath = msBuildPath,
                 ArgumentCustomization = args => args.Append("/bl:build.binlog /m")
             }
-            .WithTarget("build;pack") 
-            .WithProperty("AndroidSdkDirectory", androidHome)
+            .WithTarget("build")
             .WithProperty("PackageOutputPath",  MakeAbsolute(Directory(artifactDirectory)).ToString().Quote())
             .WithProperty("TreatWarningsAsErrors", treatWarningsAsErrors.ToString())
             .SetConfiguration("Release")
@@ -157,16 +158,20 @@ Task("BuildSolution")
             .SetNodeReuse(false));
     };
 
+	Information("Triggering Nuget Restore");
+	Information("Solution to Build: " + solutionToBuild);
+	Information("msBuildPath: " + msBuildPath);
+	Information("nuget version: " + nugetVersion.ToString());
     // Restore must be a separate step
     MSBuild(solutionToBuild, new MSBuildSettings() {
             ToolPath = msBuildPath,
             ArgumentCustomization = args => args.Append("/bl:restore.binlog /m")
         }
         .WithTarget("restore")
-        .WithProperty("AndroidSdkDirectory", androidHome)
         .WithProperty("Version", nugetVersion.ToString())
         .SetVerbosity(Verbosity.Minimal));
     
+	Information("Triggering Build");
     build(solutionToBuild);
 });
 

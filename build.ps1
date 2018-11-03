@@ -144,7 +144,7 @@ if(-Not $SkipToolPackageRestore.IsPresent) {
     Set-Location $TOOLS_DIR
 
     Write-Verbose -Message "Restoring tools from NuGet..."
-    $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install Cake -ExcludeVersion -Version 0.21.1 -OutputDirectory `"$TOOLS_DIR`""
+    $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install Cake -ExcludeVersion -Version 0.22.1 -OutputDirectory `"$TOOLS_DIR`""
     $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install xunit.runner.console -ExcludeVersion -Version 2.4.0-beta.1.build3958 -OutputDirectory `"$TOOLS_DIR`""
 
     if ($LASTEXITCODE -ne 0) {
