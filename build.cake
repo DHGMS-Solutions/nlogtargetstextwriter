@@ -190,11 +190,11 @@ Task("RunUnitTests")
     // C:\Program Files\dotnet\shared\Microsoft.NETCore.App
     var fxVersion = "2.0.5";
 
-    Action<ICakeContext> testAction = tool => {
+	Action<ICakeContext> testAction = tool => {
         tool.DotNetCoreTool(
                 projectPath: unitTestProjectFilePath,
-                command: "test"//, 
-                //arguments: "-noshadow -fxversion " + fxVersion + " -configuration Debug -diagnostics"
+                command: "test",
+                arguments: "-- -noshadow -fxversion " + fxVersion + " -configuration Debug -diagnostics"
             );
     };
 
@@ -209,7 +209,7 @@ Task("RunUnitTests")
             // working dir set to allow use of dotnet-xunit
             WorkingDirectory = projectDirectory
         }
-        .WithFilter("+[Dhgms*]*")
+        .WithFilter("+[NLog*]*")
         .ExcludeByAttribute("*.ExcludeFromCodeCoverage*")
         .ExcludeByFile("*/*Designer.cs")
         .ExcludeByFile("*/*.g.cs")
