@@ -275,6 +275,7 @@ Task("SonarBegin")
         }
     }
 
+    StartProcess("dotnet.exe", "tool install --global dotnet-sonarscanner");
     var sonarStartSettings = new ProcessSettings{ Arguments = arguments };
     StartProcess("dotnet.exe", sonarStartSettings);
   });
