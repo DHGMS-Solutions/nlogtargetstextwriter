@@ -284,7 +284,7 @@ Task("SonarEnd")
   .IsDependentOn("UploadTestCoverage")
   .WithCriteria(() => runSonarQube)
   .Does(() => {
-    var sonarEndSettings = new ProcessSettings{ Arguments = "sonarscanner end" };
+    var sonarEndSettings = new ProcessSettings{ Arguments = "sonarscanner end /d:\"sonar.login=" + sonarQubeLogin + "\"" };
     StartProcess("dotnet.exe", sonarEndSettings);
   });
 
