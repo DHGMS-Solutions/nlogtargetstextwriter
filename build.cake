@@ -160,6 +160,9 @@ Task("BuildSolution")
             .WithProperty("AssemblyVersion", assemblyVersion)
             .WithProperty("FileVersion", fileVersion)
             .WithProperty("InformationalVersion", informationalVersion)
+            .WithProperty("PublishRepositoryUrl", "true")
+            .WithProperty("EmbedUntrackedSources", "true")
+            .WithProperty("AllowedOutputExtensionsInPackageBuildOutputFolder", "$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb")
             .SetVerbosity(Verbosity.Minimal)
             .SetNodeReuse(false));
     };
