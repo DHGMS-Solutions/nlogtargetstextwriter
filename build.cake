@@ -1,4 +1,9 @@
 //////////////////////////////////////////////////////////////////////
+// MODULES
+//////////////////////////////////////////////////////////////////////
+#module "nuget:?package=Cake.DotNetTool.Module"
+
+//////////////////////////////////////////////////////////////////////
 // ADDINS
 //////////////////////////////////////////////////////////////////////
 
@@ -20,6 +25,7 @@
 #tool "nuget:?package=xunit.runner.console&version=2.4.0"
 #tool "nuget:?package=GitVersion.CommandLine&version=3.6.5"
 #tool "nuget:?package=MSBuild.SonarQube.Runner.Tool"
+#tool "dotnet:?package=dotnet-sonarscanner&version=4.4.2"
 
 //////////////////////////////////////////////////////////////////////
 // ARGUMENTS
@@ -253,25 +259,25 @@ Task("Sonar")
 Task("SonarBegin")
   .WithCriteria(() => runSonarQube)
   .Does(() => {
-        var coverageFilePath = MakeAbsolute(new FilePath(testCoverageOutputFile)).FullPath;
-        Information("Sonar: Test Coverage Output File: " + testCoverageOutputFile);
-        var arguments = "begin /k:\"" + sonarqubeProjectKey + "\" /d:\"sonar.host.url=https://sonarcloud.io\" /d:\"sonar.organization=" + sonarqubeOrganisationKey + "\" /d:\"sonar.login=" + sonarQubeLogin + "\" /d:sonar.cs.opencover.reportsPaths=\"" + coverageFilePath + "\"";
+    var coverageFilePath = MakeAbsolute(new FilePath(testCoverageOutputFile)).FullPath;
+    Information("Sonar: Test Coverage Output File: " + testCoverageOutputFile);
+    var arguments = "begin /k:\"" + sonarqubeProjectKey + "\" /d:\"sonar.host.url=https://sonarcloud.io\" /d:\"sonar.organization=" + sonarqubeOrganisationKey + "\" /d:\"sonar.login=" + sonarQubeLogin + "\" /d:sonar.cs.opencover.reportsPaths=\"" + coverageFilePath + "\"";
 
-        if (sonarQubePreview) {
-            Information("Sonar: Running Sonar on PR " + AppVeyor.Environment.PullRequest.Number);
-            arguments += " /d:\"sonar.projectVersion=sonar.projectVersion\" /d:\"sonar.analysis.mode=preview\"";
+    if (sonarQubePreview) {
+        Information("Sonar: Running Sonar on PR " + AppVeyor.Environment.PullRequest.Number);
+        arguments += " /d:\"sonar.projectVersion=sonar.projectVersion\" /d:\"sonar.analysis.mode=preview\"";
+    }
+    else {
+        Information("Sonar: Running Sonar on branch " + AppVeyor.Environment.Repository.Branch);
+        if (!isReleaseBranch)
+        {
+            arguments += " /d:\"sonar.branch.name=" + AppVeyor.Environment.Repository.Branch + "\"";
         }
-        else {
-            Information("Sonar: Running Sonar on branch " + AppVeyor.Environment.Repository.Branch);
-            if (!isReleaseBranch)
-            {
-                arguments += " /d:\"sonar.branch.name=" + AppVeyor.Environment.Repository.Branch + "\"";
-            }
-        }
+    }
 
 
-        var sonarStartSettings = new ProcessSettings{ Arguments = arguments };
-        StartProcess("./tools/MSBuild.SonarQube.Runner.Tool/tools/MSBuild.SonarQube.Runner.exe", sonarStartSettings);
+    var sonarStartSettings = new ProcessSettings{ Arguments = arguments };
+    StartProcess("./tools/MSBuild.SonarQube.Runner.Tool/tools/MSBuild.SonarQube.Runner.exe", sonarStartSettings);
   /*
      SonarBegin(new SonarBeginSettings{
         Url = "sonarcube.contoso.local",
@@ -297,22 +303,6 @@ Task("Package")
     .Does (() =>
 {
 });
-
-/*
-Task("PinNuGetDependencies")
-    .Does (() =>
-{
-    // only pin whitelisted packages.
-    foreach(var package in packageWhitelist)
-    {
-        // only pin the package which was created during this build run.
-        var packagePath = artifactDirectory + File(string.Concat(package, ".", nugetVersion, ".nupkg"));
-
-        // see https://github.com/cake-contrib/Cake.PinNuGetDependency
-        PinNuGetDependency(packagePath, "reactiveui");
-    }
-});
-*/
 
 Task("PublishPackages")
     .IsDependentOn("RunUnitTests")
