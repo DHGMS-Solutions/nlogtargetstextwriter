@@ -20,17 +20,13 @@
         /// <exception cref="ArgumentNullException">No text writer was passed.</exception>
         public TextWriterTarget(TextWriter textWriter)
         {
-            if (textWriter == null)
-            {
-                throw new ArgumentNullException(nameof(textWriter));
-            }
-
-            this._textWriter = textWriter;
+            this._textWriter = textWriter ?? throw new ArgumentNullException(nameof(textWriter));
+            this.OptimizeBufferReuse = true;
         }
 
         protected override void Write(LogEventInfo logEvent)
         {
-            var logMessage = this.Layout.Render(logEvent);
+            var logMessage = this.RenderLogEvent(Layout, logEvent);
 
             this._textWriter.Write(logMessage);
         }
