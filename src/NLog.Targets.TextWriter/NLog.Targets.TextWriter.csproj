@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;net40;net35;netstandard1.3;netstandard1.5;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net45;net40;netstandard1.3;netstandard1.5;netstandard2.0</TargetFrameworks>
     <Authors>dhgmssolutions dpvreony</Authors>
     <Company>DHGMS Solutions</Company>
     <Product>NLog Targets TextWriter</Product>
