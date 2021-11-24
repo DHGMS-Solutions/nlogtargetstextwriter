@@ -6,11 +6,20 @@ using Xunit;
 
 namespace NLog.Targets.TextWriter.UnitTests
 {
+    /// <summary>
+    /// Unit Tests for the <see cref="T:NLog.Targets.NLogTextWriterHelpers"/>.
+    /// </summary>
     [ExcludeFromCodeCoverage]
     public static class NLogTextWriterHelpersTests
     {
+        /// <summary>
+        /// Unit Tests for the <see cref="M:NLog.Targets.NLogTextWriterHelpers.ConfigureNLogToTextWriterOnExistingLoggingConfiguration"/> method.
+        /// </summary>
         public sealed class ConfigureNLogToTextWriterOnExistingLoggingConfigurationMethod
         {
+            /// <summary>
+            /// Test to ensure an argument null exception is thrown for no logging configuration being passed.
+            /// </summary>
             [Fact]
             public void ThrowsArgumentNullExceptionForLoggingConfiguration()
             {
@@ -21,6 +30,9 @@ namespace NLog.Targets.TextWriter.UnitTests
                 }
             }
 
+            /// <summary>
+            /// Test to ensure an argument null exception is thrown for no text writer being passed.
+            /// </summary>
             [Fact]
             public void ThrowsArgumentNullExceptionForTextWriter()
             {
@@ -29,6 +41,9 @@ namespace NLog.Targets.TextWriter.UnitTests
                 Assert.Equal("textWriter", exception.ParamName);
             }
 
+            /// <summary>
+            /// Test to ensure configuration succeeds when a text writer is passed.
+            /// </summary>
             [Fact]
             public void ShouldSucceedForTextWriter()
             {
@@ -39,6 +54,9 @@ namespace NLog.Targets.TextWriter.UnitTests
                 }
             }
 
+            /// <summary>
+            /// Test to ensure configuration succeeds when a minimum log level is passed.
+            /// </summary>
             [Fact]
             public void ShouldSucceedForMinLevel()
             {
@@ -49,6 +67,9 @@ namespace NLog.Targets.TextWriter.UnitTests
                 }
             }
 
+            /// <summary>
+            /// Test to ensure configuration succeeds when a maximum log level is passed.
+            /// </summary>
             [Fact]
             public void ShouldSucceedForMaxLevel()
             {
@@ -60,8 +81,14 @@ namespace NLog.Targets.TextWriter.UnitTests
             }
         }
 
+        /// <summary>
+        /// Unit Tests for the <see cref="M:NLog.Targets.NLogTextWriterHelpers.ConfigureNLogToTextWriterOnNewLoggingConfiguration"/> methods.
+        /// </summary>
         public sealed class ConfigureNLogToTextWriterOnNewLoggingConfigurationMethod
         {
+            /// <summary>
+            /// Test to ensure an argument null exception is thrown for no text writer being passed.
+            /// </summary>
             [Fact]
             public void ThrowsArgumentNullExceptionForTextWriter()
             {
@@ -69,6 +96,9 @@ namespace NLog.Targets.TextWriter.UnitTests
                 Assert.Equal("textWriter", exception.ParamName);
             }
 
+            /// <summary>
+            /// Test to ensure an argument null exception is thrown for no logging configuration being passed.
+            /// </summary>
             [Fact]
             public void ThrowsArgumentNullExceptionForMinLevel()
             {
@@ -79,6 +109,9 @@ namespace NLog.Targets.TextWriter.UnitTests
                 }
             }
 
+            /// <summary>
+            /// Test to ensure an argument null exception is thrown for no minimum log level being passed.
+            /// </summary>
             [Fact]
             public void ThrowsArgumentNullExceptionForMaxLevel()
             {
@@ -89,6 +122,9 @@ namespace NLog.Targets.TextWriter.UnitTests
                 }
             }
 
+            /// <summary>
+            /// Test to ensure an argument null exception is thrown for no logger name pattern being passed.
+            /// </summary>
             [Fact]
             public void ThrowsArgumentNullExceptionForLoggerNamePattern()
             {
@@ -99,6 +135,9 @@ namespace NLog.Targets.TextWriter.UnitTests
                 }
             }
 
+            /// <summary>
+            /// Test to ensure configuration succeeds when a text writer is passed.
+            /// </summary>
             [Fact]
             public void ShouldSucceedForTextWriter()
             {
@@ -108,6 +147,9 @@ namespace NLog.Targets.TextWriter.UnitTests
                 }
             }
 
+            /// <summary>
+            /// Test to ensure configuration succeeds when a minimum log level is passed.
+            /// </summary>
             [Fact]
             public void ShouldSucceedForMinLevel()
             {
@@ -117,6 +159,9 @@ namespace NLog.Targets.TextWriter.UnitTests
                 }
             }
 
+            /// <summary>
+            /// Test to ensure configuration succeeds when a maximum log level is passed.
+            /// </summary>
             [Fact]
             public void ShouldSucceedForMaxLevel()
             {

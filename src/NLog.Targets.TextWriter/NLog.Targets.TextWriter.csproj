@@ -2,21 +2,9 @@
 
   <PropertyGroup>
     <TargetFrameworks>net45;net40;netstandard1.3;netstandard1.5;netstandard2.0</TargetFrameworks>
-    <Authors>dhgmssolutions dpvreony</Authors>
-    <Company>DHGMS Solutions</Company>
-    <Product>NLog Targets TextWriter</Product>
-    <Version>1.1.0</Version>
-    <Description>NLog Target for using a Text Writer</Description>
-    <PackageProjectUrl>https://github.com/DHGMS-Solutions/nlogtargetstextwriter</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/DHGMS-Solutions/nlogtargetstextwriter</RepositoryUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/DHGMS-Solutions/nlogtargetstextwriter/master/LICENSE</PackageLicenseUrl>
-    <PackageTags>NLog TextWriter</PackageTags>
-    <DebugType>full</DebugType>
-    <DebugSymbols>True</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="NLog" Version="4.7.12" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
   </ItemGroup>
 </Project>

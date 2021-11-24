@@ -4,9 +4,11 @@
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
 
-    using NLog;
-    using Targets;
+    using NLog.Targets;
 
+    /// <summary>
+    /// NLog Target for relaying events to a <see cref="T:System.IO.TextWriter">TextWriter</see>.
+    /// </summary>
     [SuppressMessage("Usage", "Wintellect013:UseDebuggerDisplayAnalyzer", Justification = "Wrapper class with nothing useful")]
     public sealed class TextWriterTarget : TargetWithLayout
     {
@@ -24,6 +26,7 @@
             this.OptimizeBufferReuse = true;
         }
 
+        /// <inheritdoc />
         protected override void Write(LogEventInfo logEvent)
         {
             var logMessage = this.RenderLogEvent(Layout, logEvent);

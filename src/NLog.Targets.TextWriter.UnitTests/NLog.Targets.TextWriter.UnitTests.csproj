@@ -1,19 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.7.12" />
-    <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
+    <ProjectReference Include="..\NLog.Targets.TextWriter\NLog.Targets.TextWriter.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NLog.Targets.TextWriter\NLog.Targets.TextWriter.csproj" />
+    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
