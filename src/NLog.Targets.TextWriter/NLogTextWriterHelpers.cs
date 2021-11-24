@@ -3,6 +3,9 @@ using NLog.Config;
 
 namespace NLog.Targets.TextWriter
 {
+    /// <summary>
+    /// Helpers for working with a Text Writer target.
+    /// </summary>
     public static class NLogTextWriterHelpers
     {
         /// <summary>
@@ -30,6 +33,13 @@ namespace NLog.Targets.TextWriter
                 LogLevel.Info);
         }
 
+        /// <summary>
+        /// Adds NLog TextWriter at Information Log Level to an existing NLog configuration
+        /// </summary>
+        /// <param name="loggingConfiguration">NLog configuration</param>
+        /// <param name="textWriter">The text writer to target</param>
+        /// <param name="minLevel">The minimum log level the target will act upon.</param>
+        /// <param name="loggerNamePattern">The logger name pattern for the target.</param>
         public static void ConfigureNLogToTextWriterOnExistingLoggingConfiguration(
             LoggingConfiguration loggingConfiguration,
             System.IO.TextWriter textWriter,
@@ -62,6 +72,14 @@ namespace NLog.Targets.TextWriter
                 minLevel);
         }
 
+        /// <summary>
+        /// Adds NLog TextWriter at Information Log Level to an existing NLog configuration
+        /// </summary>
+        /// <param name="loggingConfiguration">NLog configuration</param>
+        /// <param name="textWriter">The text writer to target</param>
+        /// <param name="minLevel">The minimum log level the target will act upon.</param>
+        /// <param name="maxLevel">The maximum log level the target will act upon.</param>
+        /// <param name="loggerNamePattern">The logger name pattern for the target.</param>
         public static void ConfigureNLogToTextWriterOnExistingLoggingConfiguration(
             LoggingConfiguration loggingConfiguration,
             System.IO.TextWriter textWriter,
@@ -114,6 +132,12 @@ namespace NLog.Targets.TextWriter
             ConfigureNLogToTextWriterOnNewLoggingConfigurationInternal(textWriter, LogLevel.Info);
         }
 
+        /// <summary>
+        /// Initializes NLog to TextWriter at Information Log Level
+        /// </summary>
+        /// <param name="textWriter">The text writer to target</param>
+        /// <param name="minLevel">The minimum log level the target will act upon.</param>
+        /// <param name="loggerNamePattern">The logger name pattern for the target.</param>
         public static void ConfigureNLogToTextWriterOnNewLoggingConfiguration(
             System.IO.TextWriter textWriter,
             LogLevel minLevel,
@@ -145,6 +169,13 @@ namespace NLog.Targets.TextWriter
             NLog.LogManager.Configuration = loggingConfiguration;
         }
 
+        /// <summary>
+        /// Initializes NLog to TextWriter at Information Log Level
+        /// </summary>
+        /// <param name="textWriter">The text writer to target</param>
+        /// <param name="minLevel">The minimum log level the target will act upon.</param>
+        /// <param name="maxLevel">The maximum log level the target will act upon.</param>
+        /// <param name="loggerNamePattern">The logger name pattern for the target.</param>
         public static void ConfigureNLogToTextWriterOnNewLoggingConfiguration(
             System.IO.TextWriter textWriter,
             LogLevel minLevel,

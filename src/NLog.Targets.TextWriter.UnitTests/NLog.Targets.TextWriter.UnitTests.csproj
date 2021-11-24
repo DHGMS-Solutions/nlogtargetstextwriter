@@ -7,4 +7,8 @@
   <ItemGroup>
     <ProjectReference Include="..\NLog.Targets.TextWriter\NLog.Targets.TextWriter.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
 </Project>
