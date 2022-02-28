@@ -117,10 +117,6 @@ jobs:
       run: |
         dotnet outdated -o artifacts\outdated\outdated.json src
 
-    - name: Run Resharper Duplicate Code Finder
-      run: |
-        jb dupfinder ${{ env.solutionpath }} -o=artifacts\dupfinder\report.xml
-
 #    - name: XSLT Resharper Duplicate Code Finder output
 #    - name: Output dupfinder to PR comment
 
