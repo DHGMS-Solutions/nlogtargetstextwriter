@@ -23,7 +23,6 @@
         public TextWriterTarget(TextWriter textWriter)
         {
             this._textWriter = textWriter ?? throw new ArgumentNullException(nameof(textWriter));
-            this.OptimizeBufferReuse = true;
         }
 
         /// <inheritdoc />
